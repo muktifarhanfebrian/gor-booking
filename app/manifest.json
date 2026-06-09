@@ -1,0 +1,25 @@
+{
+  "name": "Booking GOR Pandu",
+  "short_name": "GOR Pandu",
+  "description": "Sistem Informasi Penyewaan Lapangan Badminton GOR Pandu, Ujong, Meulaboh",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#2563EB",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
