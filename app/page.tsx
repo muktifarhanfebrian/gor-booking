@@ -83,30 +83,31 @@ export default function Home() {
 
   const reviews = [
     {
-      name: "Hendra Wijaya",
-      role: "Smash Club Meulaboh",
-      avatar: "HW",
+      name: "Pondok baselo",
+      role: "Local Guide · Google Maps",
+      avatar: "PB",
       avatarColor: "from-blue-500 to-indigo-600",
-      text: "Kualitas karpet GOR Pandu mantap, tidak licin sama sekali. LED-nya pas, tidak silau saat melihat shuttlecock ke atas. Booking dari HP dalam 30 detik!",
+      text: "Sering main disini. Satu lapangan tapi lega, masih banyak space untuk sekedar latihan sama dinding, pemanasan dg lari2 kecil sekeliling lapangan tanpa mengganggu orang bermain.",
       stars: 5,
     },
     {
-      name: "dr. Faisal Rahman",
-      role: "Member Bulanan Aktif",
-      avatar: "FR",
+      name: "Rahmad Ilham",
+      role: "Ulasan Google Maps",
+      avatar: "RI",
       avatarColor: "from-emerald-500 to-teal-600",
-      text: "Paket member bulanan sangat praktis. Bayar via QRIS langsung auto-verify, jadwal main rutin kami setiap minggu otomatis aman dikunci tanpa ribet.",
+      text: "Top! Lapangannya sangat nyaman dan oke banget buat main bareng teman-teman komunitas.",
       stars: 5,
     },
     {
-      name: "Pak Samsul Bahri",
-      role: "Pemain Kasual Lokal",
-      avatar: "SB",
-      avatarColor: "from-orange-500 to-red-600",
-      text: "Proses booking-nya anti-ribet. Parkiran aman ada petugas jaga. Toilet dan kamar bilas bersih banget setelah tanding. Recommended buat sewa lapangan Meulaboh!",
+      name: "Taufannur Yusmadi",
+      role: "Ulasan Google Maps",
+      avatar: "TY",
+      avatarColor: "from-orange-500 to-amber-500",
+      text: "Fasilitasnya mantap, ruangannya lega, dan salah satu tempat badminton yang sangat direkomendasikan.",
       stars: 5,
     },
   ];
+
 
   return (
     <div className="flex-1 flex flex-col w-full bg-[#050810] text-slate-100 min-h-screen font-sans relative overflow-x-hidden">
