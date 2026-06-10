@@ -134,7 +134,7 @@ export default function Home() {
             <span className="text-sm">🏸</span>
           </div>
           <span className="font-black text-white text-sm tracking-tight">
-            GOR <span className="text-blue-400">Pandu</span> Cendikia
+            GOR <span className="text-blue-400">Pandu Cendikia</span>
           </span>
         </div>
 
