@@ -551,7 +551,7 @@ export default function Home() {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Lokasi GOR Pandu</p>
             <div className="w-full h-56 rounded-2xl overflow-hidden border border-white/8 shadow-2xl shadow-black/30 relative">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.7844005615783!2d96.12450517409252!3d4.124116046462705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x303ec3a0c5c4e9cf%3A0xe54e60b138e6dfd8!2sJl.%20Imam%20Bonjol%2C%20Seuneubok%2C%20Kec.%20Johan%20Pahlawan%2C%20Kabupaten%20Aceh%20Barat%2C%20Aceh!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15916.921480185792!2d96.11016!3d4.1750637!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x303ec3e39d1bd509%3A0xfbb592a4512045b0!2sGOR%20PANDU%20CENDIKIA!5e0!3m2!1sid!2sid!4v1781054042832!5m2!1sid!2sid"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
