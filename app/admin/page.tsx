@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { formatRupiah, getTimeSlotsForDate } from "@/lib/bookingHelpers";
 import { Booking, MockUser, MockMember, CourtConfig } from "@/types";
+import { CourtsManager } from "@/components/admin/CourtsManager";
+import { UsersManager } from "@/components/admin/UsersManager";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -180,7 +182,8 @@ export default function AdminPage() {
         setLoading(false);
       }
     } catch (error) {
-      alert("Koneksi gagal.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
+    } finally {
       setLoading(false);
     }
   };
@@ -206,7 +209,8 @@ export default function AdminPage() {
         setLoading(false);
       }
     } catch (error) {
-      alert("Koneksi gagal.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
+    } finally {
       setLoading(false);
     }
   };
@@ -230,7 +234,7 @@ export default function AdminPage() {
         fetchAdminData();
       }
     } catch (error) {
-      alert("Gagal mereset database.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -292,7 +296,7 @@ export default function AdminPage() {
       setShowManualModal(false);
       fetchAdminData();
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
     } finally {
       setManualLoading(false);
     }
@@ -345,7 +349,7 @@ export default function AdminPage() {
       setBlockReason("TURNAMEN INTERNAL GOR");
       fetchAdminData();
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
     } finally {
       setBlockLoading(false);
     }
@@ -376,7 +380,8 @@ export default function AdminPage() {
         setLoading(false);
       }
     } catch (e) {
-      alert("Koneksi gagal.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
+    } finally {
       setLoading(false);
     }
   };
@@ -413,7 +418,7 @@ export default function AdminPage() {
         alert("Gagal menambahkan member: " + result.error);
       }
     } catch (e) {
-      alert("Koneksi gagal.");
+      alert("Gagal memproses data. Periksa koneksi internet Anda dan coba lagi.");
     } finally {
       setMemberLoading(false);
     }
@@ -458,7 +463,10 @@ export default function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="flex-1 flex justify-center items-center bg-[#050810] text-white">
+      <div className="flex-1 flex justify-center items-center bg-slate-950 text-white relative overflow-hidden">
+        {/* Decorative radial gradients */}
+        <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+        <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-lime-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
         <div className="flex flex-col items-center gap-3">
           <span className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent" />
           <p className="text-xs text-slate-400 font-medium">Verifikasi Hak Akses Admin...</p>
@@ -486,20 +494,20 @@ export default function AdminPage() {
 
   // Status badge helper
   const getStatusBadge = (verification: string) => {
-    if (verification === "verified") return { text: "Lunas ✓", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25" };
-    if (verification === "pending_verification") return { text: "Menunggu ⏳", cls: "bg-amber-500/15 text-amber-400 border-amber-500/25" };
-    if (verification === "rejected") return { text: "Ditolak ✗", cls: "bg-red-500/15 text-red-400 border-red-500/25" };
-    return { text: "Belum Bayar", cls: "bg-slate-500/15 text-slate-400 border-slate-500/25" };
+    if (verification === "verified") return { text: "Lunas ✓", cls: "bg-lime-500/15 text-lime-400 border-lime-500/30" };
+    if (verification === "pending_verification") return { text: "Menunggu ⏳", cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" };
+    if (verification === "rejected") return { text: "Ditolak ✗", cls: "bg-red-500/15 text-red-400 border-red-500/30" };
+    return { text: "Belum Bayar", cls: "bg-slate-500/15 text-slate-400 border-slate-500/30" };
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full max-w-lg mx-auto bg-[#050810] min-h-screen relative overflow-hidden">
+    <div className="flex-1 flex flex-col w-full max-w-md md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 py-6 bg-slate-950 min-h-screen relative overflow-hidden">
 
       {/* ── BACKGROUND GLOWS ─────────────────────── */}
-      <div className="fixed top-[-80px] left-1/2 -translate-x-1/2 w-[400px] h-[250px] bg-blue-600/8 rounded-full blur-[100px] pointer-events-none -z-10" />
-      <div className="fixed bottom-[300px] right-[-60px] w-[200px] h-[200px] bg-orange-600/5 rounded-full blur-[80px] pointer-events-none -z-10" />
+      <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-lime-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      <div className="px-4 py-7 space-y-5">
+      <div className="space-y-5">
 
         {/* ── HEADER ───────────────────────────────── */}
         <div className="flex justify-between items-center">
@@ -525,7 +533,7 @@ export default function AdminPage() {
         </div>
 
         {/* ── METRICS CARDS ────────────────────────── */}
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Revenue */}
           <div className="relative overflow-hidden bg-gradient-to-br from-emerald-950/40 to-emerald-900/5 border border-emerald-500/20 p-3.5 rounded-2xl shadow-xl hover:border-emerald-500/30 transition-all group">
             <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl" />
@@ -553,7 +561,7 @@ export default function AdminPage() {
         </div>
 
         {/* ── FINANCIAL BREAKDOWN ───────────────────── */}
-        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
+        <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-2xl overflow-hidden relative z-10">
           <div className="px-4 py-2.5 border-b border-white/6 flex items-center gap-1.5">
             <span className="text-[10px]">📊</span>
             <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Detail Finansial Terverifikasi</span>
@@ -576,15 +584,15 @@ export default function AdminPage() {
         </div>
 
         {/* ── iOS SEGMENTED TAB CONTROL ────────────── */}
-        <div className="bg-white/[0.04] p-1 rounded-2xl flex gap-1 border border-white/6 shadow-inner">
+        <div className="bg-slate-900/40 backdrop-blur-md p-1 rounded-2xl flex gap-1 border border-slate-800/60 shadow-inner relative z-10">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex flex-col items-center py-2 rounded-xl transition-all duration-200 ${
                 activeTab === tab.id
-                  ? "bg-[#0d1526] text-white shadow-lg border border-white/10"
-                  : "text-slate-600 hover:text-slate-400"
+                  ? "bg-slate-800 text-lime-400 shadow-lg border border-slate-700"
+                  : "text-slate-500 hover:text-slate-400"
               }`}
             >
               <span className="text-sm leading-none">{tab.icon}</span>
@@ -631,7 +639,7 @@ export default function AdminPage() {
                   className={`px-3 py-1.5 rounded-xl border text-[10px] font-bold transition-all whitespace-nowrap flex-shrink-0 ${
                     filterStatus === btn.id
                       ? "bg-blue-500 border-blue-400 text-white shadow-md shadow-blue-500/20"
-                      : "bg-white/[0.03] border-white/8 text-slate-400 hover:text-slate-300 hover:border-white/12"
+                      : "bg-slate-900/40 border-slate-800/60 text-slate-400 hover:text-slate-300 hover:border-slate-700"
                   }`}
                 >
                   {btn.label}
@@ -642,14 +650,27 @@ export default function AdminPage() {
             {/* Bookings list */}
             <div className="space-y-2.5">
               {loading ? (
-                <div className="text-center py-14 space-y-2">
-                  <span className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent inline-block" />
-                  <p className="text-xs text-slate-500">Memuat data booking...</p>
-                </div>
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-white/[0.02] border border-white/6 rounded-2xl p-4 space-y-4 animate-pulse">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2 w-1/2">
+                        <div className="h-4 bg-white/10 rounded-md w-3/4"></div>
+                        <div className="h-3 bg-white/5 rounded-md w-1/2"></div>
+                      </div>
+                      <div className="h-4 bg-white/10 rounded-md w-1/4"></div>
+                    </div>
+                    <div className="h-16 bg-white/5 rounded-xl w-full"></div>
+                  </div>
+                ))
               ) : filteredBookings.length === 0 ? (
-                <div className="text-center py-14 bg-white/[0.02] border border-white/6 rounded-2xl">
-                  <p className="text-2xl mb-2">📭</p>
-                  <p className="text-xs text-slate-400 font-medium">Tidak ada booking sewa lapangan.</p>
+                <div className="text-center py-20 px-6 bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-3xl shadow-2xl flex flex-col items-center justify-center">
+                  <div className="w-20 h-20 mb-4 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shadow-inner">
+                    <span className="text-4xl opacity-80">☕</span>
+                  </div>
+                  <h4 className="text-sm font-black text-white mb-2 tracking-wide">Semua Bersih!</h4>
+                  <p className="text-xs text-slate-400 font-medium max-w-[250px] leading-relaxed">
+                    Belum ada antrean booking untuk hari ini. Santai dulu!
+                  </p>
                 </div>
               ) : (
                 filteredBookings.map((booking) => {
@@ -658,16 +679,42 @@ export default function AdminPage() {
                   const isUnpaid = booking.paymentStatus === "pending";
                   const badge = getStatusBadge(verification);
 
+                  const maskPhone = (phone: string) => {
+                    if (!phone) return "-";
+                    const p = phone.replace(/\D/g, "");
+                    if (p.length < 8) return p;
+                    return p.slice(0, 4) + "-" + p.slice(4, 8) + "-" + p.slice(8);
+                  };
+
+                  const handleWhatsAppNotification = (booking: Booking, status: "approve" | "reject") => {
+                    let phone = booking.phoneNumber.replace(/\D/g, "");
+                    if (phone.startsWith("0")) phone = "62" + phone.slice(1);
+
+                    const courtName = courts.find(c => c.id === booking.courtId)?.name || booking.courtId;
+                    const isApprove = status === "approve";
+                    const statusText = isApprove ? "DISETUJUI" : "DITOLAK";
+                    const note = isApprove 
+                      ? "Silakan datang ke GOR Pandu 15 menit sebelum jadwal. Tunjukkan pesan ini ke pengelola." 
+                      : "Silakan hubungi admin untuk pengembalian dana (jika ada) atau ganti jadwal.";
+                    
+                    const message = `Halo ${booking.customerName},\n\nBooking Anda untuk lapangan *${courtName}* pada tanggal *${booking.date}* jam *${booking.startTime} WIB* telah *${statusText}*.\n\n${note}\n\nTerima kasih,\nAdmin GOR Pandu`;
+
+                    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                    window.open(url, "_blank");
+                  };
+
+                  const courtName = courts.find(c => c.id === booking.courtId)?.name || booking.courtId;
+
                   return (
                     <div
                       key={booking.id}
-                      className="bg-white/[0.025] border border-white/8 hover:border-white/12 p-4 rounded-2xl space-y-3 text-xs transition-all"
+                      className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 hover:border-slate-700 p-4 rounded-2xl space-y-3 text-xs transition-all group relative z-10"
                     >
                       {/* Row 1: Name + Amount */}
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-black text-white text-sm leading-tight">{booking.customerName}</h4>
-                          <span className="text-[10px] text-slate-500 font-mono">{booking.phoneNumber}</span>
+                          <span className="text-[10px] text-slate-500 font-mono">{maskPhone(booking.phoneNumber)}</span>
                         </div>
                         <div className="text-right">
                           <p className="font-black text-white text-sm leading-tight">{formatRupiah(booking.totalAmount)}</p>
@@ -678,10 +725,10 @@ export default function AdminPage() {
                       </div>
 
                       {/* Row 2: Details */}
-                      <div className="bg-white/[0.03] border border-white/6 rounded-xl px-3 py-2 space-y-1 text-[10px] text-slate-400">
+                      <div className="bg-slate-950/50 border border-slate-800/60 rounded-xl px-3 py-2 space-y-1 text-[10px] text-slate-400">
                         <div className="flex justify-between">
-                          <span>Court</span>
-                          <span className="text-slate-200 font-bold">Court {booking.courtId.split("-")[1]}</span>
+                          <span>Lapangan</span>
+                          <span className="text-slate-200 font-bold">{courtName}</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Waktu</span>
@@ -693,28 +740,46 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      {/* Receipt button */}
-                      {booking.paymentProofUrl && (
-                        <div className="flex items-center justify-between pt-0.5">
-                          <span className="text-[10px] text-slate-500">Bukti Transfer:</span>
+                      {/* Actions */}
+                      <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                        {/* Receipt button */}
+                        {booking.paymentProofUrl && (
                           <button
                             onClick={() => setActiveReceiptPreview(booking.paymentProofUrl || null)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/12 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-all text-[10px] font-black rounded-xl active:scale-95"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-blue-500/12 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-all text-[10px] font-black rounded-xl active:scale-95"
                           >
-                            📸 Lihat Bukti
+                            📸 Lihat Bukti Bayar
+                          </button>
+                        )}
+
+                        {/* COD Confirm button */}
+                        {isCod && isUnpaid && (
+                          <button
+                            onClick={() => handleVerifyCodCash(booking)}
+                            className="flex-1 py-2 bg-emerald-500/12 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 font-black text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                          >
+                            💵 Konfirmasi Tunai Lunas
+                          </button>
+                        )}
+
+                        {/* WA Notify Buttons (Visible on hover/always on mobile) */}
+                        <div className="flex-1 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+                           <button
+                            onClick={() => handleWhatsAppNotification(booking, "approve")}
+                            className="flex-1 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 font-black text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1"
+                            title="Kirim WA Setuju"
+                          >
+                            💬 WA Setuju
+                          </button>
+                          <button
+                            onClick={() => handleWhatsAppNotification(booking, "reject")}
+                            className="flex-1 py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 font-black text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1"
+                            title="Kirim WA Tolak"
+                          >
+                            💬 WA Tolak
                           </button>
                         </div>
-                      )}
-
-                      {/* COD Confirm button */}
-                      {isCod && isUnpaid && (
-                        <button
-                          onClick={() => handleVerifyCodCash(booking)}
-                          className="w-full py-2 bg-emerald-500/12 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 font-black text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                        >
-                          💵 Konfirmasi Bayar Tunai di Tempat
-                        </button>
-                      )}
+                      </div>
                     </div>
                   );
                 })
@@ -727,87 +792,62 @@ export default function AdminPage() {
         {/* TAB 2: KELOLA LAPANGAN                    */}
         {/* ─────────────────────────────────────────── */}
         {activeTab === "courts" && (
-          <div className="space-y-5">
-            <div className="space-y-2.5">
-              <h3 className="text-xs font-black text-white uppercase tracking-wider">Status Operasional Lapangan</h3>
-
-              <div className="space-y-2">
-                {courts.map((court) => (
-                  <div
-                    key={court.id}
-                    className="bg-white/[0.025] border border-white/8 p-4 rounded-2xl flex justify-between items-center text-xs"
-                  >
-                    <div className="space-y-0.5">
-                      <p className="font-black text-white text-sm">Court {court.id.split("-")[1]}</p>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-1.5 h-1.5 rounded-full ${court.status === "active" ? "bg-emerald-400" : "bg-amber-400"}`} />
-                        <span className="text-[10px] text-slate-400">{court.status === "active" ? "Aktif & Beroperasi" : "Dalam Perbaikan"}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleToggleCourt(court)}
-                      className={`px-3 py-1.5 text-[10px] font-black rounded-xl border transition-all active:scale-95 ${
-                        court.status === "active"
-                          ? "bg-amber-500/12 border-amber-500/25 text-amber-300 hover:bg-amber-500/20"
-                          : "bg-emerald-500/12 border-emerald-500/25 text-emerald-300 hover:bg-emerald-500/20"
-                      }`}
-                    >
-                      {court.status === "active" ? "Set Maintenance" : "Aktifkan"}
-                    </button>
-                  </div>
-                ))}
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <CourtsManager />
             </div>
 
-            {/* Block Slot Form */}
-            <div className="bg-white/[0.025] border border-white/8 rounded-2xl overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/6">
-                <h4 className="text-xs font-black text-white uppercase tracking-wider">Blokir Slot Lapangan</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">Kunci slot untuk turnamen, latihan, atau maintenance.</p>
-              </div>
-              <form onSubmit={handleSaveBlockSlot} className="px-4 py-4 space-y-3 text-xs">
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <label className="block text-slate-400 mb-1.5 font-semibold">Lapangan</label>
+            <div className="lg:col-span-1">
+              {/* Block Slot Form */}
+              <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-2xl overflow-hidden relative z-10">
+                <div className="px-4 py-3 border-b border-slate-800/60">
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">Blokir Slot Lapangan</h4>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Kunci slot untuk turnamen, latihan, atau maintenance.</p>
+                </div>
+                <form onSubmit={handleSaveBlockSlot} className="px-4 py-4 space-y-3 text-xs">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <label className="text-slate-400 font-semibold">Lapangan</label>
+                      <select
+                        value={blockCourtId}
+                        onChange={(e) => setBlockCourtId(e.target.value)}
+                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      >
+                        {courts.map((c) => (
+                          <option key={c.id} value={c.id} className="bg-slate-950 text-white">
+                            {c.name || c.id} {c.status === "maintenance" ? "(Maintenance)" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <label className="text-slate-400 font-semibold">Tanggal</label>
+                      <input
+                        type="date"
+                        value={blockDate}
+                        onChange={(e) => setBlockDate(e.target.value)}
+                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 w-full">
+                    <label className="text-slate-400 font-semibold">Jam Slot (2 Jam)</label>
                     <select
-                      value={blockCourtId}
-                      onChange={(e) => setBlockCourtId(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      value={blockStartTime}
+                      onChange={(e) => setBlockStartTime(e.target.value)}
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      required
                     >
-                      <option value="court-1">Court 1 (Vinyl)</option>
-                      <option value="court-2">Court 2 (Vinyl)</option>
-                      <option value="court-3">Court 3 (Semen)</option>
+                      <option value="" className="bg-slate-950 text-white">-- Pilih Jam --</option>
+                      {getTimeSlotsForDate(blockDate).map((slot) => (
+                        <option key={slot.startTime} value={slot.startTime} className="bg-slate-950 text-white">
+                          {slot.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-slate-400 mb-1.5 font-semibold">Tanggal</label>
-                    <input
-                      type="date"
-                      value={blockDate}
-                      onChange={(e) => setBlockDate(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1.5 font-semibold">Jam Slot (2 Jam)</label>
-                  <select
-                    value={blockStartTime}
-                    onChange={(e) => setBlockStartTime(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
-                    required
-                  >
-                    <option value="">-- Pilih Jam --</option>
-                    {getTimeSlotsForDate(blockDate).map((slot) => (
-                      <option key={slot.startTime} value={slot.startTime}>
-                        {slot.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
                 <div>
                   <label className="block text-slate-400 mb-1.5 font-semibold">Alasan Pemblokiran</label>
@@ -832,6 +872,7 @@ export default function AdminPage() {
                 </button>
               </form>
             </div>
+            </div>
           </div>
         )}
 
@@ -845,9 +886,13 @@ export default function AdminPage() {
 
               <div className="space-y-2 max-h-60 overflow-y-auto pr-0.5">
                 {members.length === 0 ? (
-                  <div className="text-center py-10 bg-white/[0.02] border border-white/6 rounded-2xl">
-                    <p className="text-2xl mb-2">👥</p>
-                    <p className="text-xs text-slate-400">Belum ada member aktif saat ini.</p>
+                  <div className="text-center py-16 px-6 bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 rounded-3xl backdrop-blur-md shadow-2xl flex flex-col items-center justify-center mb-4">
+                    <div className="w-16 h-16 mb-4 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shadow-inner">
+                      <span className="text-3xl opacity-80">👥</span>
+                    </div>
+                    <p className="text-xs text-slate-400 font-medium max-w-[200px] leading-relaxed">
+                      Belum ada member bulanan aktif yang terdaftar.
+                    </p>
                   </div>
                 ) : (
                   members.map((member) => (
@@ -921,9 +966,9 @@ export default function AdminPage() {
                     onChange={(e) => setMemberDuration(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
                   >
-                    <option value="30">1 Bulan (30 Hari)</option>
-                    <option value="60">2 Bulan (60 Hari)</option>
-                    <option value="90">3 Bulan (90 Hari)</option>
+                    <option value="30" className="bg-[#0d1526] text-white">1 Bulan (30 Hari)</option>
+                    <option value="60" className="bg-[#0d1526] text-white">2 Bulan (60 Hari)</option>
+                    <option value="90" className="bg-[#0d1526] text-white">3 Bulan (90 Hari)</option>
                   </select>
                 </div>
 
@@ -945,41 +990,8 @@ export default function AdminPage() {
         {/* TAB 4: KELOLA AKUN                        */}
         {/* ─────────────────────────────────────────── */}
         {activeTab === "accounts" && (
-          <div className="space-y-3">
-            <h3 className="text-xs font-black text-white uppercase tracking-wider">Daftar Akun Pengguna</h3>
-
-            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-0.5">
-              {users.map((user) => (
-                <div
-                  key={user.email}
-                  className="bg-white/[0.025] border border-white/8 p-4 rounded-2xl text-xs flex justify-between items-center"
-                >
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <p className="font-black text-white text-sm">{user.name}</p>
-                      {user.role === "admin" && (
-                        <span className="text-[8px] bg-red-500/15 border border-red-500/25 text-red-300 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
-                          ADMIN
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[10px] text-slate-400 font-mono">{user.email}</p>
-                    <p className="text-[10px] text-slate-500">{user.phone}</p>
-                  </div>
-
-                  <button
-                    onClick={() => handleToggleUserRole(user)}
-                    className={`px-3 py-1.5 text-[9px] font-black rounded-xl border transition-all active:scale-95 ${
-                      user.role === "admin"
-                        ? "bg-red-500/12 border-red-500/25 text-red-300 hover:bg-red-500/20"
-                        : "bg-blue-500/12 border-blue-500/25 text-blue-300 hover:bg-blue-500/20"
-                    }`}
-                  >
-                    {user.role === "admin" ? "→ User" : "→ Admin"}
-                  </button>
-                </div>
-              ))}
-            </div>
+          <div className="space-y-5">
+            <UsersManager />
           </div>
         )}
 
@@ -1118,9 +1130,11 @@ export default function AdminPage() {
                     onChange={(e) => setManualCourtId(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/40 transition-all"
                   >
-                    <option value="court-1">Court 1 (Vinyl)</option>
-                    <option value="court-2">Court 2 (Vinyl)</option>
-                    <option value="court-3">Court 3 (Semen)</option>
+                    {courts.filter(c => c.status === "active").map((c) => (
+                      <option key={c.id} value={c.id} className="bg-[#0d1526] text-white">
+                        {c.name || c.id}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

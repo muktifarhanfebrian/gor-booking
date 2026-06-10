@@ -72,25 +72,34 @@ export default function LoginPage() {
           setIsLogin(true);
         }
       } else {
-        // NATIVE SUPABASE AUTHENTICATION FLOW
+        // CUSTOM TABLE AUTHENTICATION FLOW
         if (isLogin) {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "login_admin",
+              email,
+              password
+            })
           });
 
-          if (error) throw error;
+          const result = await res.json();
 
-          const user = data.user;
-          const isAdmin = user?.email === "admin@gor.com";
+          if (!res.ok || !result.success) {
+            throw new Error(result.error || "Login gagal. Pastikan email dan password Anda benar.");
+          }
+
+          const user = result.user;
+          const isAdmin = user.role === "admin";
           
           localStorage.setItem(
             "gor_session",
             JSON.stringify({
-              email: user?.email,
-              role: isAdmin ? "admin" : "user",
-              name: user?.user_metadata?.full_name || user?.email?.split("@")[0],
-              id: user?.id
+              email: user.email,
+              role: user.role,
+              name: user.name,
+              id: user.id
             })
           );
 
@@ -104,23 +113,7 @@ export default function LoginPage() {
           }, 1000);
         } else {
           // Sign Up
-          const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                full_name: fullName,
-              },
-            },
-          });
-
-          if (error) throw error;
-
-          setMessage({
-            type: "success",
-            text: "Registrasi berhasil! Silakan cek email Anda untuk konfirmasi (jika diaktifkan) atau login langsung.",
-          });
-          setIsLogin(true);
+          throw new Error("Pendaftaran mandiri dengan password dinonaktifkan. Silakan gunakan login OTP via WhatsApp atau hubungi admin.");
         }
       }
     } catch (err: any) {
@@ -131,7 +124,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 bg-[#080b11]">
+    <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 bg-slate-950 relative overflow-hidden">
+      {/* Decorative radial gradients */}
+      <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-lime-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
       {/* Top Navigation */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between">
         <button
@@ -143,14 +140,14 @@ export default function LoginPage() {
         <span className="text-xs text-slate-500 font-bold tracking-wider">GOR PANDU MEULABOH</span>
       </div>
 
-      <div className="w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl space-y-6">
+      <div className="w-full max-w-md bg-slate-900/40 backdrop-blur-md border border-slate-800/60 p-8 rounded-3xl shadow-2xl space-y-6">
         
         {/* Branding header */}
         <div className="text-center space-y-2">
           <div className="w-12 h-12 bg-gor-primary/10 border border-gor-primary/20 text-gor-primary rounded-2xl flex items-center justify-center text-xl font-bold mx-auto mb-2 shadow-inner">
             🏸
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight">
             {isLogin ? "Masuk Akun" : "Daftar Akun Baru"}
           </h2>
           <p className="text-xs text-slate-400">
@@ -190,7 +187,7 @@ export default function LoginPage() {
                 placeholder="Nama Lengkap Anda"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all"
               />
             </div>
           )}
@@ -202,7 +199,7 @@ export default function LoginPage() {
               placeholder="nama@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all"
             />
           </div>
 
@@ -213,14 +210,14 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all"
             />
           </div>
 
           <button
             disabled={loading}
             type="submit"
-            className="w-full py-3.5 bg-gor-primary hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-600/20 text-sm transition-all flex justify-center items-center gap-2"
+            className="w-full py-3.5 bg-lime-500 hover:bg-lime-400 hover:scale-105 text-slate-950 rounded-xl font-extrabold shadow-lg shadow-lime-500/20 text-sm transition-all duration-300 flex justify-center items-center gap-2"
           >
             {loading ? (
               <>

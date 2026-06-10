@@ -174,15 +174,15 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
   const selectedCourtName = COURTS.find((c) => c.id === courtId)?.name || "";
 
   return (
-    <div className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+    <div className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-3xl overflow-hidden shadow-2xl">
       {/* Progress Header */}
       {step <= 3 && (
         <div className="flex border-b border-slate-800 px-6 py-4 items-center justify-between text-xs font-semibold text-slate-400">
-          <span className={`${step >= 1 ? "text-gor-primary" : ""}`}>1. Slot</span>
+          <span className={`${step >= 1 ? "text-lime-400 font-bold" : ""}`}>1. Slot</span>
           <div className="w-8 h-[1px] bg-slate-800" />
-          <span className={`${step >= 2 ? "text-gor-primary" : ""}`}>2. Detail</span>
+          <span className={`${step >= 2 ? "text-lime-400 font-bold" : ""}`}>2. Detail</span>
           <div className="w-8 h-[1px] bg-slate-800" />
-          <span className={`${step >= 3 ? "text-gor-primary" : ""}`}>3. Bayar</span>
+          <span className={`${step >= 3 ? "text-lime-400 font-bold" : ""}`}>3. Bayar</span>
         </div>
       )}
 
@@ -206,8 +206,8 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                   type="button"
                   className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 ${
                     courtId === c.id
-                      ? "bg-gor-court/10 border-gor-court text-white shadow-lg shadow-gor-court/10"
-                      : "bg-slate-950/30 border-slate-800 hover:border-slate-700 text-slate-300"
+                      ? "bg-slate-900/80 ring-2 ring-lime-400 border-transparent shadow-lg shadow-lime-500/10 text-white"
+                      : "bg-slate-900/30 border-slate-800/60 hover:border-slate-700 text-slate-300"
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -215,7 +215,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                     <span
                       className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
                         courtId === c.id
-                          ? "border-gor-court bg-gor-court"
+                          ? "border-lime-400 bg-lime-400"
                           : "border-slate-600"
                       }`}
                     >
@@ -238,7 +238,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                 setDate(e.target.value);
                 setStartTime(""); // Reset time on date change
               }}
-              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+              className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm font-bold"
             />
           </div>
 
@@ -255,11 +255,11 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                     disabled={isAlreadyBooked}
                     onClick={() => setStartTime(slot.startTime)}
                     type="button"
-                    className={`py-3 px-2 text-center text-xs rounded-xl border font-medium transition-all ${
+                    className={`py-3 px-2 text-center text-sm rounded-xl border font-bold transition-all ${
                       isAlreadyBooked
                         ? "bg-slate-950/20 border-slate-950 text-slate-600 cursor-not-allowed line-through"
                         : isSelected
-                        ? "bg-gor-primary border-gor-primary text-white"
+                        ? "bg-lime-500 border-lime-500 text-slate-950"
                         : "bg-slate-950/40 border-slate-800 hover:border-slate-700 text-slate-300"
                     }`}
                   >
@@ -274,7 +274,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
           <button
             disabled={!startTime}
             onClick={() => setStep(2)}
-            className="w-full py-4 bg-gor-primary hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-lime-500 hover:bg-lime-400 hover:scale-105 text-slate-950 rounded-2xl font-extrabold shadow-lg shadow-lime-500/20 transition-all duration-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             Lanjutkan
           </button>
@@ -295,7 +295,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                 placeholder="Nama Anda"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
               />
             </div>
             
@@ -306,7 +306,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                 placeholder="Contoh: 081360078986"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gor-primary text-sm"
+                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
               />
             </div>
 
@@ -318,7 +318,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                   onClick={() => setBookingType("regular")}
                   className={`p-4 text-left border rounded-2xl transition-all ${
                     bookingType === "regular"
-                      ? "bg-gor-primary/10 border-gor-primary text-white"
+                      ? "bg-slate-900/80 ring-2 ring-lime-400 border-transparent text-white"
                       : "bg-slate-950/30 border-slate-800 text-slate-400"
                   }`}
                 >
@@ -331,7 +331,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                   onClick={() => setBookingType("member")}
                   className={`p-4 text-left border rounded-2xl transition-all ${
                     bookingType === "member"
-                      ? "bg-gor-bata/10 border-gor-bata text-white"
+                      ? "bg-slate-900/80 ring-2 ring-lime-400 border-transparent text-white"
                       : "bg-slate-950/30 border-slate-800 text-slate-400"
                   }`}
                 >
@@ -343,7 +343,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
           </div>
 
           {bookingType === "member" && (
-            <div className="p-3 bg-gor-bata/10 border border-gor-bata/20 text-gor-bata text-[11px] rounded-xl leading-relaxed">
+            <div className="p-3 bg-lime-500/10 border border-lime-500/20 text-lime-400 text-[11px] rounded-xl leading-relaxed">
               <strong>Info Keanggotaan:</strong> Dengan memilih Member, booking akan dijadwalkan secara otomatis selama 5 minggu berturut-turut pada hari dan jam yang sama. Pembayaran dicatat secara atomik (Rp80.000/minggu).
             </div>
           )}
@@ -358,7 +358,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
             <button
               disabled={!customerName.trim() || !phoneNumber.trim()}
               onClick={() => setStep(3)}
-              className="w-2/3 py-3.5 bg-gor-primary hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-600/20 text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-2/3 py-3.5 bg-lime-500 hover:bg-lime-400 text-slate-950 rounded-xl font-extrabold shadow-lg shadow-lime-500/20 text-sm transition-all hover:scale-105 duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               Lanjutkan
             </button>
@@ -377,7 +377,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
               onClick={() => setPaymentMethod("cod")}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
                 paymentMethod === "cod"
-                  ? "bg-gor-court/10 border-gor-court text-white"
+                  ? "bg-slate-900/80 ring-2 ring-lime-400 border-transparent text-white"
                   : "bg-slate-950/30 border-slate-800 text-slate-400"
               }`}
             >
@@ -386,7 +386,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                   <span className="block font-bold text-sm">COD / Bayar Manual</span>
                   <span className="block text-xs text-slate-400 mt-0.5">Bayar tunai di lokasi GOR</span>
                 </div>
-                <span className="text-xs bg-slate-800 px-2 py-1 rounded text-gor-court font-semibold">Bebas Biaya</span>
+                <span className="text-xs bg-slate-800 px-2 py-1 rounded text-lime-400 font-semibold">Bebas Biaya</span>
               </div>
             </button>
 
@@ -395,7 +395,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
               onClick={() => setPaymentMethod("qris")}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
                 paymentMethod === "qris"
-                  ? "bg-gor-primary/10 border-gor-primary text-white"
+                  ? "bg-slate-900/80 ring-2 ring-lime-400 border-transparent text-white"
                   : "bg-slate-950/30 border-slate-800 text-slate-400"
               }`}
             >
@@ -442,7 +442,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
 
             <div className="flex justify-between text-sm font-bold text-white border-t border-slate-800 pt-3">
               <span>Total Bayar</span>
-              <span className="text-gor-primary">
+              <span className="text-lime-400">
                 {formatRupiah((bookingType === "member" ? 400000 : 100000) + (paymentMethod === "qris" ? 1000 : 0))}
               </span>
             </div>
@@ -459,7 +459,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
             <button
               disabled={loading}
               type="submit"
-              className="w-2/3 py-3.5 bg-gor-court hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg shadow-emerald-600/20 text-sm transition-all flex justify-center items-center gap-2"
+              className="w-2/3 py-3.5 bg-lime-500 hover:bg-lime-400 text-slate-950 rounded-xl font-extrabold shadow-lg shadow-lime-500/20 text-sm hover:scale-105 duration-300 transition-all flex justify-center items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
             >
               {loading ? (
                 <>
@@ -478,7 +478,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
       {step === 4 && qrisBilling && (
         <div className="p-6 space-y-6 text-center">
           <div>
-            <span className="text-xs bg-orange-950/30 text-gor-bata font-semibold border border-gor-bata/20 px-3 py-1 rounded-full">
+            <span className="text-xs bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20 px-3 py-1 rounded-full">
               Menunggu Pembayaran QRIS
             </span>
             <h3 className="text-xl font-bold text-white mt-3">Selesaikan Pembayaran</h3>
@@ -521,7 +521,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
             <button
               onClick={handleVerifyQrisPayment}
               disabled={paymentVerifying || qrisTimer <= 0}
-              className="w-full py-4 bg-gor-court hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-emerald-600/20 text-sm transition-all flex justify-center items-center gap-2"
+              className="w-full py-4 bg-lime-500 hover:bg-lime-400 text-slate-950 hover:scale-105 duration-300 rounded-2xl font-extrabold shadow-lg shadow-lime-500/20 text-sm transition-all flex justify-center items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
             >
               {paymentVerifying ? (
                 <>
@@ -539,7 +539,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
       {/* Step 5: Success Receipt */}
       {step === 5 && (
         <div className="p-6 space-y-6 text-center">
-          <div className="w-16 h-16 bg-emerald-950/30 text-gor-court border border-gor-court/30 rounded-full flex items-center justify-center mx-auto text-2xl animate-bounce">
+          <div className="w-16 h-16 bg-lime-500/10 text-lime-400 border border-lime-500/30 rounded-full flex items-center justify-center mx-auto text-2xl animate-bounce">
             ✓
           </div>
 
@@ -579,12 +579,12 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
                 <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Status Pembayaran</span>
                 <span className={`text-[11px] font-bold ${
                   createdBookings[0]?.paymentStatus === "success" 
-                    ? "text-gor-court" 
-                    : "text-orange-400"
+                    ? "text-lime-400" 
+                    : "text-amber-400"
                 }`}>
                   {createdBookings[0]?.paymentStatus === "success" 
                     ? "LUNAS (QRIS)" 
-                    : "BELUM BAYAR (COD/MANUAL)"
+                    : "BELUM BAYAR"
                   }
                 </span>
               </div>
@@ -615,7 +615,7 @@ export default function BookingForm({ onBookingSuccess }: BookingFormProps) {
               // Call callback to update dashboard statistics
               onBookingSuccess();
             }}
-            className="w-full py-4 bg-gor-primary hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 text-sm transition-all"
+            className="w-full py-4 bg-lime-500 hover:bg-lime-400 hover:scale-105 duration-300 text-slate-950 rounded-2xl font-extrabold shadow-lg shadow-lime-500/20 text-sm transition-all"
           >
             Kembali ke Dashboard
           </button>

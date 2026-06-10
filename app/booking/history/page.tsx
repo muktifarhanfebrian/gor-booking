@@ -153,7 +153,10 @@ export default function BookingHistoryPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full max-w-lg mx-auto bg-[#0b0f19] min-h-screen px-4 py-8">
+    <div className="flex-1 flex flex-col w-full max-w-lg mx-auto bg-slate-950 relative overflow-hidden min-h-screen px-4 py-8">
+      {/* Decorative radial gradients */}
+      <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-lime-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
       
       {/* Header bar */}
       <div className="flex justify-between items-center mb-6">
@@ -172,7 +175,7 @@ export default function BookingHistoryPage() {
         ) : (
           <button
             onClick={() => router.push("/login")}
-            className="px-3.5 py-1.5 bg-gor-primary/20 border border-gor-primary/20 text-gor-primary text-xs font-semibold rounded-xl"
+            className="px-3.5 py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold rounded-xl transition-all"
           >
             Masuk Akun
           </button>
@@ -180,7 +183,7 @@ export default function BookingHistoryPage() {
       </div>
 
       {/* Lookup box (always shown for quick search by WhatsApp) */}
-      <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-3xl space-y-4 mb-6">
+      <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 p-5 rounded-3xl space-y-4 mb-6 relative z-10">
         <h3 className="text-xs font-bold text-white uppercase tracking-wider block">Cari dengan Nomor WhatsApp</h3>
         <form onSubmit={handlePhoneSearch} className="flex gap-2">
           <input
@@ -188,12 +191,12 @@ export default function BookingHistoryPage() {
             placeholder="Masukkan nomor WA (cth: 0813...)"
             value={searchPhone}
             onChange={(e) => setSearchPhone(e.target.value)}
-            className="flex-1 bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-gor-primary text-xs"
+            className="flex-1 bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs transition-all"
           />
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-gor-primary hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-all"
+            className="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-slate-950 rounded-xl font-extrabold text-xs transition-all shadow-lg shadow-lime-500/20 hover:scale-105 duration-300"
           >
             Cari
           </button>
@@ -213,13 +216,13 @@ export default function BookingHistoryPage() {
             <p className="text-xs text-slate-500 mt-2">Memuat riwayat...</p>
           </div>
         ) : bookings.length === 0 ? (
-          <div className="text-center py-16 bg-slate-950/20 border border-slate-850 rounded-3xl">
+          <div className="text-center py-16 bg-slate-900/20 backdrop-blur-md border border-slate-800/60 rounded-3xl relative z-10">
             <span className="text-3xl block mb-2">📋</span>
             <p className="text-xs text-slate-400 font-medium">Belum ada riwayat booking.</p>
             <p className="text-[10px] text-slate-500 mt-1">Gunakan form pencarian di atas atau lakukan pemesanan baru.</p>
             <button
               onClick={() => router.push("/booking")}
-              className="mt-4 px-4 py-2 bg-gor-primary text-white text-xs font-bold rounded-xl"
+              className="mt-4 px-4 py-2 bg-lime-500 hover:bg-lime-400 text-slate-950 hover:scale-105 duration-300 transition-all shadow-lg shadow-lime-500/20 text-xs font-bold rounded-xl"
             >
               Pesan Lapangan
             </button>
@@ -244,7 +247,7 @@ export default function BookingHistoryPage() {
               return (
                 <div
                   key={booking.id}
-                  className="bg-slate-950/40 border border-slate-850 p-4 rounded-3xl space-y-3 transition-all"
+                  className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 p-4 rounded-3xl space-y-3 transition-all relative z-10"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -279,7 +282,7 @@ export default function BookingHistoryPage() {
                         onClick={() => 
                           setUploadingBookingId(uploadingBookingId === booking.id ? null : booking.id)
                         }
-                        className="text-[10px] text-gor-primary font-bold hover:underline"
+                        className="text-[10px] text-blue-400 font-bold hover:underline"
                       >
                         {uploadingBookingId === booking.id ? "Batal" : "Upload Bukti Transfer"}
                       </button>
@@ -304,7 +307,7 @@ export default function BookingHistoryPage() {
                           <button
                             onClick={() => handleUploadProof(booking)}
                             disabled={loading}
-                            className="w-full py-2 bg-gor-court text-white font-bold text-xs rounded-xl"
+                            className="w-full py-2 bg-lime-500 hover:bg-lime-400 text-slate-950 font-extrabold shadow-lg shadow-lime-500/20 hover:scale-105 duration-300 transition-all text-xs rounded-xl"
                           >
                             Kirim Bukti Pembayaran
                           </button>

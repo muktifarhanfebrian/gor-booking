@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
 
     const courts = (resCourts.data || []).map((c: any) => ({
       id: c.id,
+      name: c.name || c.id,
       status: c.status
     }));
 
@@ -56,13 +57,50 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, email, name, phone, durationDays } = body;
+    const { action, email, name, phone, durationDays, password } = body;
 
     if (!action) {
       return NextResponse.json(
         { success: false, error: "Aksi tidak ditentukan." },
         { status: 400 }
       );
+    }
+
+    if (action === "login_admin") {
+      if (!email || !password) {
+        return NextResponse.json(
+          { success: false, error: "Email dan password wajib diisi." },
+          { status: 400 }
+        );
+      }
+
+      // Gunakan admin bypass karena RLS mencegah unauthenticated user membaca tabel
+      const { getAdminSupabase } = await import("@/lib/adminAuth");
+      const supabaseAdmin = getAdminSupabase();
+      
+      const { data: user, error } = await supabaseAdmin
+        .from("users")
+        .select("id, email, name, role")
+        .eq("email", email)
+        .eq("password", password)
+        .single();
+
+      if (error || !user) {
+        return NextResponse.json(
+          { success: false, error: "Login gagal. Pastikan email dan password Anda benar." },
+          { status: 401 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        }
+      });
     }
 
     if (action === "register_user") {

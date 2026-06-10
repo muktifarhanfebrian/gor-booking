@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Open_Sans } from "next/font/google";
 import "./globals.css";
 import RegisterSW from "../components/RegisterSW";
 import InstallPWA from "../components/InstallPWA";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
 });
 
@@ -46,9 +46,9 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${openSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#080b11] text-slate-100 selection:bg-gor-primary/30 selection:text-white">
+      <body className="min-h-full flex flex-col bg-[#050810] text-slate-100 selection:bg-gor-primary/30 selection:text-white font-sans">
         <RegisterSW />
         <main className="flex-1 flex flex-col">{children}</main>
         <InstallPWA />

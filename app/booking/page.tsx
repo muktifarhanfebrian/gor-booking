@@ -8,7 +8,10 @@ export default function BookingPage() {
   const router = useRouter();
 
   return (
-    <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 bg-[#080b11]">
+    <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 bg-slate-950 relative overflow-hidden">
+      {/* Decorative radial gradients */}
+      <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-lime-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
       {/* Top Navigation */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between">
         <button
