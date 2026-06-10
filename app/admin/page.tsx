@@ -458,9 +458,11 @@ export default function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="flex-1 flex justify-center items-center bg-[#080b11] text-white">
-        <span className="animate-spin rounded-full h-6 w-6 border-2 border-gor-primary border-t-transparent inline-block mr-2" />
-        Verifikasi Hak Akses Admin...
+      <div className="flex-1 flex justify-center items-center bg-[#050810] text-white">
+        <div className="flex flex-col items-center gap-3">
+          <span className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent" />
+          <p className="text-xs text-slate-400 font-medium">Verifikasi Hak Akses Admin...</p>
+        </div>
       </div>
     );
   }
@@ -474,643 +476,674 @@ export default function AdminPage() {
     return true;
   });
 
+  // Tab config
+  const tabs = [
+    { id: "bookings", label: "Pesanan", icon: "📋" },
+    { id: "courts", label: "Lapangan", icon: "🏸" },
+    { id: "members", label: "Member", icon: "👥" },
+    { id: "accounts", label: "Akun", icon: "🔑" },
+  ];
+
+  // Status badge helper
+  const getStatusBadge = (verification: string) => {
+    if (verification === "verified") return { text: "Lunas ✓", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25" };
+    if (verification === "pending_verification") return { text: "Menunggu ⏳", cls: "bg-amber-500/15 text-amber-400 border-amber-500/25" };
+    if (verification === "rejected") return { text: "Ditolak ✗", cls: "bg-red-500/15 text-red-400 border-red-500/25" };
+    return { text: "Belum Bayar", cls: "bg-slate-500/15 text-slate-400 border-slate-500/25" };
+  };
+
   return (
-    <div className="flex-1 flex flex-col w-full max-w-lg mx-auto bg-[#070a13] border-x border-slate-900 min-h-screen px-4 py-8 relative overflow-hidden">
-      
-      {/* Ambient Glows */}
-      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[350px] h-[200px] bg-gor-primary/10 rounded-full blur-[80px] -z-10 pointer-events-none" />
-      <div className="absolute bottom-[200px] right-[-50px] w-[200px] h-[200px] bg-gor-bata/5 rounded-full blur-[70px] -z-10 pointer-events-none" />
+    <div className="flex-1 flex flex-col w-full max-w-lg mx-auto bg-[#050810] min-h-screen relative overflow-hidden">
 
-      {/* Header bar */}
-      <div className="flex justify-between items-center mb-6 z-10">
-        <div>
-          <h1 className="text-xl font-black text-white tracking-tight flex items-center gap-1.5">
-            Admin Panel <span className="text-slate-400">⚙️</span>
-          </h1>
-          <p className="text-[10px] text-slate-400 font-medium tracking-wide">Kelola & verifikasi sewa lapangan real-time</p>
-        </div>
-        
-        <button
-          onClick={() => {
-            localStorage.removeItem("gor_session");
-            router.push("/");
-          }}
-          className="px-3 py-1.5 bg-slate-900/80 border border-slate-800 text-slate-300 text-[10px] font-bold rounded-xl hover:text-white hover:bg-slate-850 hover:border-slate-700 transition-all active:scale-95 shadow-md"
-        >
-          Keluar
-        </button>
-      </div>
+      {/* ── BACKGROUND GLOWS ─────────────────────── */}
+      <div className="fixed top-[-80px] left-1/2 -translate-x-1/2 w-[400px] h-[250px] bg-blue-600/8 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[300px] right-[-60px] w-[200px] h-[200px] bg-orange-600/5 rounded-full blur-[80px] pointer-events-none -z-10" />
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-3 gap-2.5 mb-4 text-center z-10">
-        {/* Revenue Metric */}
-        <div className="bg-gradient-to-br from-emerald-950/20 via-slate-950/40 to-slate-950/60 border border-emerald-500/20 p-3 rounded-2xl flex flex-col justify-between shadow-lg hover:border-emerald-500/30 transition-all duration-300">
-          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Pendapatan</span>
-          <span className="text-xs font-black text-emerald-400 block mt-1.5 leading-none">
-            {formatRupiah(metrics.totalRevenue)}
-          </span>
-        </div>
+      <div className="px-4 py-7 space-y-5">
 
-        {/* Total Bookings Metric */}
-        <div className="bg-gradient-to-br from-blue-950/20 via-slate-950/40 to-slate-950/60 border border-blue-500/20 p-3 rounded-2xl flex flex-col justify-between shadow-lg hover:border-blue-500/30 transition-all duration-300">
-          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Total Sewa</span>
-          <span className="text-xs font-black text-blue-400 block mt-1.5 leading-none">
-            {metrics.totalBookings} Slot
-          </span>
-        </div>
-
-        {/* Active Members Metric */}
-        <div className="bg-gradient-to-br from-orange-950/20 via-slate-950/40 to-slate-950/60 border border-orange-500/20 p-3 rounded-2xl flex flex-col justify-between shadow-lg hover:border-orange-500/30 transition-all duration-300">
-          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Member</span>
-          <span className="text-xs font-black text-orange-400 block mt-1.5 leading-none">
-            {metrics.activeMembersCount} Orang
-          </span>
-        </div>
-      </div>
-
-      {/* Financial Breakdown Panel */}
-      <div className="bg-slate-950/50 backdrop-blur-md border border-slate-900 p-4.5 rounded-2xl mb-6 text-xs space-y-3 shadow-lg z-10">
-        <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider block border-b border-slate-900 pb-2 flex items-center gap-1.5">
-          <span>📊</span> Detail Finansial GOR Terverifikasi
-        </span>
-        
-        <div className="grid grid-cols-1 gap-2.5">
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-gor-primary rounded-full" />
-              Sewa Reguler QRIS
-            </span>
-            <span className="text-white font-bold font-mono">{formatRupiah(metrics.qrisRevenue)}</span>
-          </div>
-          
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              Sewa Reguler COD
-            </span>
-            <span className="text-white font-bold font-mono">{formatRupiah(metrics.codRevenue)}</span>
-          </div>
-          
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-gor-bata rounded-full" />
-              Paket Member Bulanan
-            </span>
-            <span className="text-gor-bata font-black font-mono">{formatRupiah(metrics.memberRevenue)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* iOS-Style Pill Segmented Control Navigation */}
-      <div className="bg-slate-950/70 p-1 border border-slate-900/80 rounded-2xl flex gap-1 mb-6 shadow-inner z-10">
-        {[
-          { id: "bookings", label: "Pesanan" },
-          { id: "courts", label: "Lapangan" },
-          { id: "members", label: "Member" },
-          { id: "accounts", label: "Akun" }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${
-              activeTab === tab.id
-                ? "bg-[#0d1222] text-white shadow-md border border-slate-800/80"
-                : "text-slate-500 hover:text-slate-350"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* TAB 1: KELOLA PESANAN PANEL */}
-      {activeTab === "bookings" && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Antrean Sewa Lapangan</h3>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowManualModal(true)}
-                className="text-[9px] font-bold text-gor-court hover:text-emerald-400 border border-emerald-950 px-2 py-1 rounded bg-emerald-950/10 transition-all active:scale-95"
-              >
-                + Booking Manual
-              </button>
-              <button
-                onClick={handleResetDb}
-                className="text-[9px] font-bold text-red-500 hover:text-red-400 border border-red-950 px-2 py-1 rounded bg-red-950/10 transition-all active:scale-95"
-              >
-                Reset Database
-              </button>
+        {/* ── HEADER ───────────────────────────────── */}
+        <div className="flex justify-between items-center">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
+                <span className="text-xs">⚙️</span>
+              </div>
+              <h1 className="text-lg font-black text-white tracking-tight">Admin Panel</h1>
             </div>
+            <p className="text-[10px] text-slate-500 font-medium pl-9">Kelola & verifikasi sewa lapangan GOR Pandu</p>
           </div>
 
-          {/* Filters */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <button
+            onClick={() => {
+              localStorage.removeItem("gor_session");
+              router.push("/");
+            }}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 text-slate-400 hover:text-white text-[10px] font-bold rounded-xl hover:bg-white/8 hover:border-white/15 transition-all active:scale-95"
+          >
+            Keluar →
+          </button>
+        </div>
+
+        {/* ── METRICS CARDS ────────────────────────── */}
+        <div className="grid grid-cols-3 gap-2.5">
+          {/* Revenue */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-emerald-950/40 to-emerald-900/5 border border-emerald-500/20 p-3.5 rounded-2xl shadow-xl hover:border-emerald-500/30 transition-all group">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl" />
+            <p className="text-[9px] text-emerald-400/70 font-black uppercase tracking-widest">Pendapatan</p>
+            <p className="text-[13px] font-black text-emerald-300 mt-1.5 leading-none tabular-nums">
+              {formatRupiah(metrics.totalRevenue)}
+            </p>
+          </div>
+
+          {/* Total Bookings */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-blue-950/40 to-blue-900/5 border border-blue-500/20 p-3.5 rounded-2xl shadow-xl hover:border-blue-500/30 transition-all group">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full blur-xl" />
+            <p className="text-[9px] text-blue-400/70 font-black uppercase tracking-widest">Total Sewa</p>
+            <p className="text-2xl font-black text-blue-300 mt-1.5 leading-none">{metrics.totalBookings}</p>
+            <p className="text-[9px] text-blue-400/50 font-semibold -mt-0.5">slot booking</p>
+          </div>
+
+          {/* Members */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-orange-950/40 to-orange-900/5 border border-orange-500/20 p-3.5 rounded-2xl shadow-xl hover:border-orange-500/30 transition-all group">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/5 rounded-full blur-xl" />
+            <p className="text-[9px] text-orange-400/70 font-black uppercase tracking-widest">Member</p>
+            <p className="text-2xl font-black text-orange-300 mt-1.5 leading-none">{metrics.activeMembersCount}</p>
+            <p className="text-[9px] text-orange-400/50 font-semibold -mt-0.5">orang aktif</p>
+          </div>
+        </div>
+
+        {/* ── FINANCIAL BREAKDOWN ───────────────────── */}
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-white/6 flex items-center gap-1.5">
+            <span className="text-[10px]">📊</span>
+            <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Detail Finansial Terverifikasi</span>
+          </div>
+          <div className="px-4 py-3 space-y-2.5 text-xs">
             {[
-              { id: "all", label: "Semua" },
-              { id: "pending", label: "Pending Cek" },
-              { id: "verified", label: "Lunas" },
-              { id: "unsubmitted", label: "Belum Bayar" },
-            ].map((btn) => (
-              <button
-                key={btn.id}
-                onClick={() => setFilterStatus(btn.id)}
-                className={`px-3 py-1.5 rounded-xl border text-[10px] font-semibold transition-all whitespace-nowrap ${
-                  filterStatus === btn.id
-                    ? "bg-gor-primary border-gor-primary text-white"
-                    : "bg-slate-950/30 border-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                {btn.label}
-              </button>
+              { dot: "bg-blue-500", label: "Sewa Reguler QRIS", value: formatRupiah(metrics.qrisRevenue), valCls: "text-white" },
+              { dot: "bg-emerald-500", label: "Sewa Reguler COD", value: formatRupiah(metrics.codRevenue), valCls: "text-white" },
+              { dot: "bg-orange-400", label: "Paket Member Bulanan", value: formatRupiah(metrics.memberRevenue), valCls: "text-orange-300 font-black" },
+            ].map((row, i) => (
+              <div key={i} className="flex justify-between items-center text-slate-400">
+                <span className="flex items-center gap-2">
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${row.dot}`} />
+                  {row.label}
+                </span>
+                <span className={`font-mono font-bold ${row.valCls}`}>{row.value}</span>
+              </div>
             ))}
           </div>
+        </div>
 
-          {/* Bookings list */}
-          <div className="space-y-3">
-            {loading ? (
-              <div className="text-center py-12">
-                <span className="animate-spin rounded-full h-6 w-6 border-2 border-gor-primary border-t-transparent inline-block" />
+        {/* ── iOS SEGMENTED TAB CONTROL ────────────── */}
+        <div className="bg-white/[0.04] p-1 rounded-2xl flex gap-1 border border-white/6 shadow-inner">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex flex-col items-center py-2 rounded-xl transition-all duration-200 ${
+                activeTab === tab.id
+                  ? "bg-[#0d1526] text-white shadow-lg border border-white/10"
+                  : "text-slate-600 hover:text-slate-400"
+              }`}
+            >
+              <span className="text-sm leading-none">{tab.icon}</span>
+              <span className="text-[9px] font-black mt-0.5 uppercase tracking-wider">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* ─────────────────────────────────────────── */}
+        {/* TAB 1: KELOLA PESANAN                     */}
+        {/* ─────────────────────────────────────────── */}
+        {activeTab === "bookings" && (
+          <div className="space-y-4">
+            {/* Top bar */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-xs font-black text-white uppercase tracking-wider">Antrean Booking</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowManualModal(true)}
+                  className="flex items-center gap-1 text-[9px] font-black text-emerald-400 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl bg-emerald-500/8 hover:bg-emerald-500/15 transition-all active:scale-95"
+                >
+                  ＋ Manual
+                </button>
+                <button
+                  onClick={handleResetDb}
+                  className="text-[9px] font-bold text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-xl bg-red-500/8 hover:bg-red-500/15 transition-all active:scale-95"
+                >
+                  Reset DB
+                </button>
               </div>
-            ) : filteredBookings.length === 0 ? (
-              <div className="text-center py-12 bg-slate-950/20 border border-slate-850 rounded-2xl">
-                <p className="text-xs text-slate-400">Tidak ada booking sewa lapangan.</p>
-              </div>
-            ) : (
-              filteredBookings.map((booking) => {
-                const verification = booking.paymentVerificationStatus || "unsubmitted";
-                const isCod = booking.paymentMethod === "cod";
-                const isUnpaid = booking.paymentStatus === "pending";
+            </div>
 
-                return (
-                  <div
-                    key={booking.id}
-                    className="bg-slate-955/40 border border-slate-850 p-4 rounded-3xl space-y-3 text-xs"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-bold text-white leading-tight">
-                          {booking.customerName}
-                        </h4>
-                        <span className="text-[10px] text-slate-400">{booking.phoneNumber}</span>
+            {/* Filter chips */}
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+              {[
+                { id: "all", label: "Semua" },
+                { id: "pending", label: "⏳ Pending" },
+                { id: "verified", label: "✓ Lunas" },
+                { id: "unsubmitted", label: "Belum Bayar" },
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => setFilterStatus(btn.id)}
+                  className={`px-3 py-1.5 rounded-xl border text-[10px] font-bold transition-all whitespace-nowrap flex-shrink-0 ${
+                    filterStatus === btn.id
+                      ? "bg-blue-500 border-blue-400 text-white shadow-md shadow-blue-500/20"
+                      : "bg-white/[0.03] border-white/8 text-slate-400 hover:text-slate-300 hover:border-white/12"
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Bookings list */}
+            <div className="space-y-2.5">
+              {loading ? (
+                <div className="text-center py-14 space-y-2">
+                  <span className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent inline-block" />
+                  <p className="text-xs text-slate-500">Memuat data booking...</p>
+                </div>
+              ) : filteredBookings.length === 0 ? (
+                <div className="text-center py-14 bg-white/[0.02] border border-white/6 rounded-2xl">
+                  <p className="text-2xl mb-2">📭</p>
+                  <p className="text-xs text-slate-400 font-medium">Tidak ada booking sewa lapangan.</p>
+                </div>
+              ) : (
+                filteredBookings.map((booking) => {
+                  const verification = booking.paymentVerificationStatus || "unsubmitted";
+                  const isCod = booking.paymentMethod === "cod";
+                  const isUnpaid = booking.paymentStatus === "pending";
+                  const badge = getStatusBadge(verification);
+
+                  return (
+                    <div
+                      key={booking.id}
+                      className="bg-white/[0.025] border border-white/8 hover:border-white/12 p-4 rounded-2xl space-y-3 text-xs transition-all"
+                    >
+                      {/* Row 1: Name + Amount */}
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-black text-white text-sm leading-tight">{booking.customerName}</h4>
+                          <span className="text-[10px] text-slate-500 font-mono">{booking.phoneNumber}</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-black text-white text-sm leading-tight">{formatRupiah(booking.totalAmount)}</p>
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${badge.cls}`}>
+                            {badge.text}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-bold text-slate-100">{formatRupiah(booking.totalAmount)}</span>
-                    </div>
 
-                    <div className="bg-slate-950/60 p-2.5 rounded-xl text-[10px] text-slate-400 space-y-1">
-                      <div>Lapangan: <span className="text-slate-200">Court {booking.courtId.split("-")[1]}</span></div>
-                      <div>Waktu: <span className="text-slate-200 font-mono">{booking.date} @ {booking.startTime} WIB</span></div>
-                      <div>Paket: <span className="text-slate-200 uppercase">{booking.bookingType} • {booking.paymentMethod.toUpperCase()}</span></div>
-                    </div>
-
-                    {/* QRIS / Transfer receipt validation actions */}
-                    {booking.paymentProofUrl && (
-                      <div className="border-t border-slate-900/60 pt-3 flex items-center justify-between">
-                        <span className="text-[10px] text-slate-400">Bukti Transfer:</span>
-                        <button
-                          onClick={() => setActiveReceiptPreview(booking.paymentProofUrl || null)}
-                          className="px-3 py-1 bg-gor-primary/20 text-gor-primary border border-gor-primary/20 hover:bg-gor-primary/30 transition-all text-[10px] font-bold rounded-lg"
-                        >
-                          Lihat Bukti 📸
-                        </button>
+                      {/* Row 2: Details */}
+                      <div className="bg-white/[0.03] border border-white/6 rounded-xl px-3 py-2 space-y-1 text-[10px] text-slate-400">
+                        <div className="flex justify-between">
+                          <span>Court</span>
+                          <span className="text-slate-200 font-bold">Court {booking.courtId.split("-")[1]}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Waktu</span>
+                          <span className="text-slate-200 font-mono">{booking.date} · {booking.startTime} WIB</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Paket</span>
+                          <span className="text-slate-200 uppercase font-semibold">{booking.bookingType} · {booking.paymentMethod}</span>
+                        </div>
                       </div>
-                    )}
 
-                    {/* COD Quick actions */}
-                    {isCod && isUnpaid && (
-                      <div className="border-t border-slate-900/60 pt-3 flex gap-2">
+                      {/* Receipt button */}
+                      {booking.paymentProofUrl && (
+                        <div className="flex items-center justify-between pt-0.5">
+                          <span className="text-[10px] text-slate-500">Bukti Transfer:</span>
+                          <button
+                            onClick={() => setActiveReceiptPreview(booking.paymentProofUrl || null)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/12 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-all text-[10px] font-black rounded-xl active:scale-95"
+                          >
+                            📸 Lihat Bukti
+                          </button>
+                        </div>
+                      )}
+
+                      {/* COD Confirm button */}
+                      {isCod && isUnpaid && (
                         <button
                           onClick={() => handleVerifyCodCash(booking)}
-                          className="w-full py-1.5 bg-emerald-950/40 border border-emerald-800/40 text-gor-court font-semibold text-[10px] rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1"
+                          className="w-full py-2 bg-emerald-500/12 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 font-black text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1.5"
                         >
-                          <span>💵</span> Konfirmasi Bayar Tunai di Tempat
+                          💵 Konfirmasi Bayar Tunai di Tempat
                         </button>
-                      </div>
-                    )}
-
-                    {/* Verification status label */}
-                    <div className="flex justify-between items-center text-[9px] text-slate-500 font-semibold mt-1">
-                      <span>Status Pembayaran:</span>
-                      <span className={`uppercase font-bold ${
-                        verification === "verified"
-                          ? "text-gor-court"
-                          : verification === "pending_verification"
-                          ? "text-amber-400 font-extrabold"
-                          : verification === "rejected"
-                          ? "text-red-400"
-                          : "text-slate-400"
-                      }`}>
-                        {verification === "verified"
-                          ? "Lunas (Terverifikasi)"
-                          : verification === "pending_verification"
-                          ? "Menunggu Konfirmasi"
-                          : verification === "rejected"
-                          ? "Bukti Ditolak"
-                          : "Belum Bayar"}
-                      </span>
+                      )}
                     </div>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* TAB 2: KELOLA LAPANGAN PANEL */}
-      {activeTab === "courts" && (
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Status Operasional Lapangan</h3>
-            
-            <div className="grid grid-cols-1 gap-2.5">
-              {courts.map((court) => (
-                <div 
-                  key={court.id}
-                  className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl flex justify-between items-center text-xs"
-                >
+        {/* ─────────────────────────────────────────── */}
+        {/* TAB 2: KELOLA LAPANGAN                    */}
+        {/* ─────────────────────────────────────────── */}
+        {activeTab === "courts" && (
+          <div className="space-y-5">
+            <div className="space-y-2.5">
+              <h3 className="text-xs font-black text-white uppercase tracking-wider">Status Operasional Lapangan</h3>
+
+              <div className="space-y-2">
+                {courts.map((court) => (
+                  <div
+                    key={court.id}
+                    className="bg-white/[0.025] border border-white/8 p-4 rounded-2xl flex justify-between items-center text-xs"
+                  >
+                    <div className="space-y-0.5">
+                      <p className="font-black text-white text-sm">Court {court.id.split("-")[1]}</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${court.status === "active" ? "bg-emerald-400" : "bg-amber-400"}`} />
+                        <span className="text-[10px] text-slate-400">{court.status === "active" ? "Aktif & Beroperasi" : "Dalam Perbaikan"}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleToggleCourt(court)}
+                      className={`px-3 py-1.5 text-[10px] font-black rounded-xl border transition-all active:scale-95 ${
+                        court.status === "active"
+                          ? "bg-amber-500/12 border-amber-500/25 text-amber-300 hover:bg-amber-500/20"
+                          : "bg-emerald-500/12 border-emerald-500/25 text-emerald-300 hover:bg-emerald-500/20"
+                      }`}
+                    >
+                      {court.status === "active" ? "Set Maintenance" : "Aktifkan"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Block Slot Form */}
+            <div className="bg-white/[0.025] border border-white/8 rounded-2xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/6">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">Blokir Slot Lapangan</h4>
+                <p className="text-[10px] text-slate-500 mt-0.5">Kunci slot untuk turnamen, latihan, atau maintenance.</p>
+              </div>
+              <form onSubmit={handleSaveBlockSlot} className="px-4 py-4 space-y-3 text-xs">
+                <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <span className="font-bold text-white block">Court {court.id.split("-")[1]}</span>
-                    <span className="text-[10px] text-slate-400 mt-1 block">
-                      Status: {court.status === "active" ? "Aktif 🟢" : "Dalam Perbaikan 🛠️"}
-                    </span>
+                    <label className="block text-slate-400 mb-1.5 font-semibold">Lapangan</label>
+                    <select
+                      value={blockCourtId}
+                      onChange={(e) => setBlockCourtId(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                    >
+                      <option value="court-1">Court 1 (Vinyl)</option>
+                      <option value="court-2">Court 2 (Vinyl)</option>
+                      <option value="court-3">Court 3 (Semen)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1.5 font-semibold">Tanggal</label>
+                    <input
+                      type="date"
+                      value={blockDate}
+                      onChange={(e) => setBlockDate(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Jam Slot (2 Jam)</label>
+                  <select
+                    value={blockStartTime}
+                    onChange={(e) => setBlockStartTime(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                    required
+                  >
+                    <option value="">-- Pilih Jam --</option>
+                    {getTimeSlotsForDate(blockDate).map((slot) => (
+                      <option key={slot.startTime} value={slot.startTime}>
+                        {slot.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Alasan Pemblokiran</label>
+                  <input
+                    type="text"
+                    value={blockReason}
+                    onChange={(e) => setBlockReason(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                    placeholder="Turnamen, Maintenance, dll."
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={blockLoading}
+                  className="w-full py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs rounded-xl shadow-lg shadow-orange-600/15 transition-all active:scale-95 flex justify-center items-center gap-2"
+                >
+                  {blockLoading ? (
+                    <><span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" /> Memblokir...</>
+                  ) : "🔒 Kunci Slot Lapangan"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ─────────────────────────────────────────── */}
+        {/* TAB 3: KELOLA MEMBER                      */}
+        {/* ─────────────────────────────────────────── */}
+        {activeTab === "members" && (
+          <div className="space-y-5">
+            <div className="space-y-2.5">
+              <h3 className="text-xs font-black text-white uppercase tracking-wider">Daftar Member Aktif</h3>
+
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-0.5">
+                {members.length === 0 ? (
+                  <div className="text-center py-10 bg-white/[0.02] border border-white/6 rounded-2xl">
+                    <p className="text-2xl mb-2">👥</p>
+                    <p className="text-xs text-slate-400">Belum ada member aktif saat ini.</p>
+                  </div>
+                ) : (
+                  members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="bg-white/[0.025] border border-white/8 p-4 rounded-2xl text-xs relative"
+                    >
+                      <span className="absolute top-3.5 right-3.5 text-[9px] bg-orange-500/15 text-orange-300 border border-orange-500/25 px-2 py-0.5 rounded-lg font-black">
+                        {calculateRemainingDays(member.endDate)}
+                      </span>
+                      <p className="font-black text-white text-sm leading-tight">{member.name}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{member.email}</p>
+                      <p className="text-[10px] text-slate-400">{member.phone}</p>
+                      <p className="text-[9px] text-slate-600 mt-2 pt-2 border-t border-white/6">
+                        {member.startDate.split("T")[0]} s/d {member.endDate.split("T")[0]}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Add Member Form */}
+            <div className="bg-white/[0.025] border border-white/8 rounded-2xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/6">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">Registrasi Member Baru</h4>
+                <p className="text-[10px] text-slate-500 mt-0.5">Daftarkan member baru langsung dari admin panel.</p>
+              </div>
+              <form onSubmit={handleSaveMember} className="px-4 py-4 space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Nama Member</label>
+                  <input
+                    type="text"
+                    value={memberName}
+                    onChange={(e) => setMemberName(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                    placeholder="Contoh: Pak Ahmad"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-slate-400 mb-1.5 font-semibold">Email</label>
+                    <input
+                      type="email"
+                      value={memberEmail}
+                      onChange={(e) => setMemberEmail(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      placeholder="nama@email.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1.5 font-semibold">WhatsApp</label>
+                    <input
+                      type="tel"
+                      value={memberPhone}
+                      onChange={(e) => setMemberPhone(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                      placeholder="0813..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Durasi Paket (Rp400.000/bln)</label>
+                  <select
+                    value={memberDuration}
+                    onChange={(e) => setMemberDuration(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/50 transition-all"
+                  >
+                    <option value="30">1 Bulan (30 Hari)</option>
+                    <option value="60">2 Bulan (60 Hari)</option>
+                    <option value="90">3 Bulan (90 Hari)</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={memberLoading}
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-xs rounded-xl shadow-lg shadow-blue-600/15 transition-all active:scale-95 flex justify-center items-center gap-2"
+                >
+                  {memberLoading ? (
+                    <><span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" /> Mendaftarkan...</>
+                  ) : "👥 Daftarkan Member"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ─────────────────────────────────────────── */}
+        {/* TAB 4: KELOLA AKUN                        */}
+        {/* ─────────────────────────────────────────── */}
+        {activeTab === "accounts" && (
+          <div className="space-y-3">
+            <h3 className="text-xs font-black text-white uppercase tracking-wider">Daftar Akun Pengguna</h3>
+
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-0.5">
+              {users.map((user) => (
+                <div
+                  key={user.email}
+                  className="bg-white/[0.025] border border-white/8 p-4 rounded-2xl text-xs flex justify-between items-center"
+                >
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <p className="font-black text-white text-sm">{user.name}</p>
+                      {user.role === "admin" && (
+                        <span className="text-[8px] bg-red-500/15 border border-red-500/25 text-red-300 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
+                          ADMIN
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-mono">{user.email}</p>
+                    <p className="text-[10px] text-slate-500">{user.phone}</p>
                   </div>
 
                   <button
-                    onClick={() => handleToggleCourt(court)}
-                    className={`px-3 py-1.5 text-[10px] font-bold rounded-lg border transition-all ${
-                      court.status === "active"
-                        ? "bg-amber-950/20 border-amber-900/30 text-amber-400"
-                        : "bg-emerald-950/20 border-emerald-900/30 text-gor-court"
+                    onClick={() => handleToggleUserRole(user)}
+                    className={`px-3 py-1.5 text-[9px] font-black rounded-xl border transition-all active:scale-95 ${
+                      user.role === "admin"
+                        ? "bg-red-500/12 border-red-500/25 text-red-300 hover:bg-red-500/20"
+                        : "bg-blue-500/12 border-blue-500/25 text-blue-300 hover:bg-blue-500/20"
                     }`}
                   >
-                    {court.status === "active" ? "Set Maintenance" : "Aktifkan"}
+                    {user.role === "admin" ? "→ User" : "→ Admin"}
                   </button>
                 </div>
               ))}
             </div>
           </div>
+        )}
 
-          {/* Block Court Slot Form */}
-          <div className="bg-slate-950/40 border border-slate-850 p-5 rounded-3xl space-y-4">
-            <div>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider block">Blokir Slot Lapangan Manual</h4>
-              <p className="text-[10px] text-slate-400 mt-1">Blokir slot jam untuk keperluan pribadi/turnamen internal GOR.</p>
-            </div>
+        {/* ── BACK BUTTON ──────────────────────────── */}
+        <button
+          onClick={() => router.push("/")}
+          className="w-full py-3 bg-white/[0.03] border border-white/8 text-slate-500 hover:text-slate-300 rounded-2xl text-xs font-semibold transition-all text-center hover:border-white/12 active:scale-95"
+        >
+          ← Kembali ke Halaman Utama
+        </button>
+      </div>
 
-            <form onSubmit={handleSaveBlockSlot} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-slate-400 mb-1">Lapangan</label>
-                  <select
-                    value={blockCourtId}
-                    onChange={(e) => setBlockCourtId(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-white"
-                  >
-                    <option value="court-1">Court 1 (Vinyl)</option>
-                    <option value="court-2">Court 2 (Vinyl)</option>
-                    <option value="court-3">Court 3 (Semen)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1">Tanggal</label>
-                  <input
-                    type="date"
-                    value={blockDate}
-                    onChange={(e) => setBlockDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-white"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1">Jam Slot (2 Jam)</label>
-                <select
-                  value={blockStartTime}
-                  onChange={(e) => setBlockStartTime(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                  required
-                >
-                  <option value="">-- Pilih Jam --</option>
-                  {getTimeSlotsForDate(blockDate).map((slot) => (
-                    <option key={slot.startTime} value={slot.startTime}>
-                      {slot.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1">Alasan Pemblokiran</label>
-                <input
-                  type="text"
-                  value={blockReason}
-                  onChange={(e) => setBlockReason(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                  placeholder="Turnamen, Maintenance, Latihan, dll."
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={blockLoading}
-                className="w-full py-2 bg-gor-bata text-white font-bold text-xs rounded-xl shadow-lg shadow-orange-950/20 transition-all active:scale-95"
-              >
-                {blockLoading ? "Memblokir..." : "Kunci Slot Lapangan"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: KELOLA MEMBER PANEL */}
-      {activeTab === "members" && (
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Member Aktif</h3>
-            
-            <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
-              {members.length === 0 ? (
-                <div className="text-center py-8 bg-slate-950/20 border border-slate-850 rounded-2xl">
-                  <p className="text-xs text-slate-400">Tidak ada member aktif saat ini.</p>
-                </div>
-              ) : (
-                members.map((member) => (
-                  <div 
-                    key={member.id}
-                    className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl text-xs space-y-1 relative"
-                  >
-                    <span className="absolute top-4 right-4 text-[9px] bg-orange-950/30 text-gor-bata border border-gor-bata/20 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                      {calculateRemainingDays(member.endDate)}
-                    </span>
-                    
-                    <span className="font-bold text-white block">{member.name}</span>
-                    <span className="text-[10px] text-slate-400 block">{member.email}</span>
-                    <span className="text-[10px] text-slate-400 block">{member.phone}</span>
-                    <span className="text-[9px] text-slate-500 block pt-1 border-t border-slate-900 mt-2">
-                      Masa Aktif: {member.startDate.split("T")[0]} s/d {member.endDate.split("T")[0]}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Add member form */}
-          <div className="bg-slate-950/40 border border-slate-850 p-5 rounded-3xl space-y-4">
-            <div>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider block">Registrasi Member Baru Manual</h4>
-              <p className="text-[10px] text-slate-400 mt-1">Daftarkan member baru langsung dari admin.</p>
-            </div>
-
-            <form onSubmit={handleSaveMember} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-slate-400 mb-1">Nama Member</label>
-                <input
-                  type="text"
-                  value={memberName}
-                  onChange={(e) => setMemberName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                  placeholder="Contoh: Pak Ahmad"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-slate-400 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={memberEmail}
-                    onChange={(e) => setMemberEmail(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                    placeholder="nama@email.com"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1">WhatsApp</label>
-                  <input
-                    type="tel"
-                    value={memberPhone}
-                    onChange={(e) => setMemberPhone(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                    placeholder="0813..."
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1">Durasi Paket (Rp400.000 / bln)</label>
-                <select
-                  value={memberDuration}
-                  onChange={(e) => setMemberDuration(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white"
-                >
-                  <option value="30">1 Bulan (30 Hari)</option>
-                  <option value="60">2 Bulan (60 Hari)</option>
-                  <option value="90">3 Bulan (90 Hari)</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                disabled={memberLoading}
-                className="w-full py-2 bg-gor-primary text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-950/20 transition-all active:scale-95"
-              >
-                {memberLoading ? "Mendaftarkan..." : "Daftarkan Member"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: KELOLA AKUN PANEL */}
-      {activeTab === "accounts" && (
-        <div className="space-y-4">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Akun Pengguna</h3>
-          
-          <div className="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
-            {users.map((user) => (
-              <div 
-                key={user.email}
-                className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl text-xs flex justify-between items-center"
-              >
-                <div>
-                  <span className="font-bold text-white block">
-                    {user.name} 
-                    {user.role === "admin" && <span className="text-[9px] bg-red-950/30 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded ml-1 font-bold">ADMIN</span>}
-                  </span>
-                  <span className="text-[10px] text-slate-400 block mt-1">{user.email}</span>
-                  <span className="text-[10px] text-slate-400 block">{user.phone}</span>
-                </div>
-
-                <button
-                  onClick={() => handleToggleUserRole(user)}
-                  className={`px-3 py-1.5 text-[9px] font-bold rounded-lg border transition-all ${
-                    user.role === "admin"
-                      ? "bg-red-950/20 border-red-900/30 text-red-400"
-                      : "bg-blue-950/20 border-blue-900/30 text-blue-400"
-                  }`}
-                >
-                  {user.role === "admin" ? "Jadikan User" : "Jadikan Admin"}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Image Receipt Preview & Approval Modal */}
+      {/* ══════════════════════════════════════════════ */}
+      {/*  RECEIPT VERIFICATION MODAL                   */}
+      {/* ══════════════════════════════════════════════ */}
       {activeReceiptPreview && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
-          <div className="w-full max-w-sm bg-[#0a0d16] p-6 rounded-3xl border border-slate-850 space-y-4 shadow-2xl shadow-blue-950/10">
-            <div className="flex justify-between items-center border-b border-slate-850 pb-3">
-              <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-                <span>📸</span> Verifikasi Bukti Bayar
-              </span>
-              <button 
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-end sm:items-center justify-center p-4 transition-all duration-300"
+          onClick={(e) => { if (e.target === e.currentTarget) setActiveReceiptPreview(null); }}
+        >
+          <div className="w-full max-w-sm bg-[#0a0d18] border border-white/10 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 animate-in slide-in-from-bottom-4 duration-300">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center px-5 py-4 border-b border-white/8">
+              <div className="flex items-center gap-2">
+                <span className="text-base">📸</span>
+                <span className="text-xs font-black text-white uppercase tracking-wider">Verifikasi Bukti Bayar</span>
+              </div>
+              <button
                 onClick={() => setActiveReceiptPreview(null)}
-                className="text-slate-400 hover:text-white text-xs font-bold transition-colors"
+                className="w-7 h-7 bg-white/8 hover:bg-white/15 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition-all text-sm font-bold"
               >
-                Tutup
+                ✕
               </button>
             </div>
-            
-            <div className="relative h-72 w-full bg-[#05070c] rounded-2xl overflow-hidden border border-slate-900 flex items-center justify-center shadow-inner">
+
+            {/* Receipt Image */}
+            <div className="bg-[#030508] flex items-center justify-center min-h-[280px] max-h-[360px] overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={activeReceiptPreview}
-                alt="Receipt Detail"
-                className="max-h-full max-w-full object-contain"
+                alt="Bukti Transfer"
+                className="max-w-full max-h-[360px] object-contain"
               />
             </div>
 
-            {/* Verification actions inside modal */}
-            {(() => {
-              // Find the booking matching active receipt to get details for buttons
-              const matchedBooking = bookings.find((b) => b.paymentProofUrl === activeReceiptPreview);
-              if (matchedBooking && matchedBooking.paymentVerificationStatus === "pending_verification") {
+            {/* Action Buttons */}
+            <div className="px-5 py-4 border-t border-white/8">
+              {(() => {
+                const matchedBooking = bookings.find((b) => b.paymentProofUrl === activeReceiptPreview);
+                if (matchedBooking && matchedBooking.paymentVerificationStatus === "pending_verification") {
+                  return (
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleVerify(matchedBooking, "reject")}
+                        className="flex-1 py-3 bg-red-500/12 border border-red-500/25 text-red-300 hover:bg-red-500/20 font-black text-xs rounded-2xl transition-all active:scale-95"
+                      >
+                        ✕ Tolak
+                      </button>
+                      <button
+                        onClick={() => handleVerify(matchedBooking, "approve")}
+                        className="flex-1 py-3 bg-emerald-500/20 border border-emerald-500/35 text-emerald-300 hover:bg-emerald-500/30 font-black text-xs rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/10"
+                      >
+                        ✓ Setujui Lunas
+                      </button>
+                    </div>
+                  );
+                }
                 return (
-                  <div className="flex gap-2.5 pt-1">
-                    <button
-                      onClick={() => handleVerify(matchedBooking, "reject")}
-                      className="flex-1 py-3 bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 font-bold text-xs rounded-xl transition-all active:scale-95"
-                    >
-                      Tolak Bukti ❌
-                    </button>
-                    <button
-                      onClick={() => handleVerify(matchedBooking, "approve")}
-                      className="flex-1 py-3 bg-emerald-950/30 border border-emerald-800/30 text-gor-court hover:bg-emerald-950/50 font-black text-xs rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-950/10"
-                    >
-                      Setujui Bayar ✓
-                    </button>
+                  <div className="py-2 text-center text-[10px] text-slate-500 bg-white/[0.02] rounded-xl border border-white/6 font-medium italic">
+                    * Bukti transaksi ini telah diverifikasi.
                   </div>
                 );
-              }
-              return (
-                <div className="text-center text-[10px] text-slate-500 font-medium py-2.5 bg-slate-950/30 rounded-xl border border-slate-900 italic">
-                  * Bukti transaksi ini telah diverifikasi.
-                </div>
-              );
-            })()}
+              })()}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Quick navigation */}
-      <button
-        onClick={() => router.push("/")}
-        className="w-full mt-6 py-3.5 bg-slate-950/50 border border-slate-800 text-slate-400 hover:text-white rounded-2xl text-xs font-semibold transition-all text-center"
-      >
-        ← Halaman Utama
-      </button>
-
-      {/* Manual Booking Modal Popup (WhatsApp booking input) */}
+      {/* ══════════════════════════════════════════════ */}
+      {/*  MANUAL BOOKING MODAL                         */}
+      {/* ══════════════════════════════════════════════ */}
       {showManualModal && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <form 
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-end sm:items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowManualModal(false); }}
+        >
+          <form
             onSubmit={handleSaveManualBooking}
-            className="w-full max-w-sm bg-[#0a0d16] border border-slate-850 p-6 rounded-3xl space-y-4 shadow-2xl text-xs"
+            className="w-full max-w-sm bg-[#0a0d18] border border-white/10 rounded-3xl overflow-hidden shadow-2xl shadow-black/50"
           >
-            <div className="flex justify-between items-center border-b border-slate-850 pb-3">
-              <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-1">
-                <span>➕</span> Booking Manual GOR
-              </h3>
+            {/* Modal Header */}
+            <div className="flex justify-between items-center px-5 py-4 border-b border-white/8">
+              <div className="flex items-center gap-2">
+                <span className="text-base">➕</span>
+                <span className="text-xs font-black text-white uppercase tracking-wider">Booking Manual GOR</span>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowManualModal(false)}
-                className="text-slate-400 hover:text-white text-xs font-bold transition-colors"
+                className="w-7 h-7 bg-white/8 hover:bg-white/15 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition-all text-sm font-bold"
               >
-                Tutup
+                ✕
               </button>
             </div>
 
-            <div className="space-y-3">
+            {/* Form Fields */}
+            <div className="px-5 py-4 space-y-3 text-xs">
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Nama Penyewa</label>
+                <label className="block text-slate-400 mb-1.5 font-semibold">Nama Penyewa</label>
                 <input
                   type="text"
                   placeholder="Contoh: Pak Ahmad via WA"
                   value={manualName}
                   onChange={(e) => setManualName(e.target.value)}
-                  className="w-full bg-[#05070c] border border-slate-900 focus:border-slate-750 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-gor-primary/10 transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/10 transition-all"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Nomor WhatsApp (Opsional)</label>
+                <label className="block text-slate-400 mb-1.5 font-semibold">Nomor WhatsApp (Opsional)</label>
                 <input
                   type="tel"
-                  placeholder="Contoh: 081360078986"
+                  placeholder="081360078986"
                   value={manualPhone}
                   onChange={(e) => setManualPhone(e.target.value)}
-                  className="w-full bg-[#05070c] border border-slate-900 focus:border-slate-750 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-gor-primary/10 transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/10 transition-all"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Lapangan</label>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Lapangan</label>
                   <select
                     value={manualCourtId}
                     onChange={(e) => setManualCourtId(e.target.value)}
-                    className="w-full bg-[#05070c] border border-slate-900 focus:border-slate-750 rounded-xl px-2.5 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-gor-primary/10 transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-blue-500/40 transition-all"
                   >
                     <option value="court-1">Court 1 (Vinyl)</option>
                     <option value="court-2">Court 2 (Vinyl)</option>
                     <option value="court-3">Court 3 (Semen)</option>
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Tanggal</label>
+                  <label className="block text-slate-400 mb-1.5 font-semibold">Tanggal</label>
                   <input
                     type="date"
                     value={manualDate}
                     onChange={(e) => {
                       setManualDate(e.target.value);
-                      setManualStartTime(""); // Reset selected slot
+                      setManualStartTime("");
                     }}
-                    className="w-full bg-[#05070c] border border-slate-900 focus:border-slate-750 rounded-xl px-2 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-gor-primary/10 transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-2.5 py-2.5 text-white focus:outline-none focus:border-blue-500/40 transition-all"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Jam Slot (2 Jam)</label>
+                <label className="block text-slate-400 mb-1.5 font-semibold">Jam Slot (2 Jam)</label>
                 <select
                   value={manualStartTime}
                   onChange={(e) => setManualStartTime(e.target.value)}
-                  className="w-full bg-[#05070c] border border-slate-900 focus:border-slate-750 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-gor-primary/10 transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500/40 transition-all"
                   required
                 >
                   <option value="">-- Pilih Jam --</option>
@@ -1128,22 +1161,21 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setManualPaymentMethod("cod")}
-                    className={`py-2.5 px-3 border rounded-xl font-bold transition-all text-center text-[10px] active:scale-95 ${
+                    className={`py-2.5 px-3 border rounded-xl font-black transition-all text-center text-[10px] active:scale-95 ${
                       manualPaymentMethod === "cod"
-                        ? "bg-gor-court/10 border-gor-court/50 text-white"
-                        : "bg-[#05070c] border-slate-900 text-slate-500 hover:text-slate-400"
+                        ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                        : "bg-white/[0.03] border-white/8 text-slate-500 hover:text-slate-400"
                     }`}
                   >
                     COD / Belum Lunas
                   </button>
-
                   <button
                     type="button"
                     onClick={() => setManualPaymentMethod("transfer")}
-                    className={`py-2.5 px-3 border rounded-xl font-bold transition-all text-center text-[10px] active:scale-95 ${
+                    className={`py-2.5 px-3 border rounded-xl font-black transition-all text-center text-[10px] active:scale-95 ${
                       manualPaymentMethod === "transfer"
-                        ? "bg-[#0d1222] border-gor-primary/50 text-white"
-                        : "bg-[#05070c] border-slate-900 text-slate-500 hover:text-slate-400"
+                        ? "bg-blue-500/15 border-blue-500/40 text-blue-300"
+                        : "bg-white/[0.03] border-white/8 text-slate-500 hover:text-slate-400"
                     }`}
                   >
                     Transfer / Lunas
@@ -1152,17 +1184,15 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="pt-2">
+            {/* Submit */}
+            <div className="px-5 pb-5">
               <button
                 type="submit"
                 disabled={manualLoading}
-                className="w-full py-3.5 bg-gor-primary hover:bg-blue-600 text-white rounded-xl font-black text-xs shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 transition-all active:scale-95 flex justify-center items-center gap-2 border border-blue-400/20"
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white rounded-2xl font-black text-xs shadow-xl shadow-blue-600/20 transition-all active:scale-95 flex justify-center items-center gap-2 border border-blue-400/20"
               >
                 {manualLoading ? (
-                  <>
-                    <span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
-                    Menyimpan...
-                  </>
+                  <><span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" /> Menyimpan...</>
                 ) : (
                   "Simpan Booking Manual"
                 )}
@@ -1174,3 +1204,4 @@ export default function AdminPage() {
     </div>
   );
 }
+
