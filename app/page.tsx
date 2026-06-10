@@ -75,10 +75,10 @@ export default function Home() {
   ];
 
   const steps = [
-    { num: "01", icon: "👤", title: "Registrasi / Masuk", desc: "Masuk akun email atau cari instan via nomor WhatsApp." },
-    { num: "02", icon: "🗓️", title: "Pilih Jam Lapangan", desc: "Pilih court, tanggal bermain, dan jam slot sewa kosong." },
-    { num: "03", icon: "💳", title: "Lakukan Pembayaran", desc: "Scan QRIS otomatis (+Rp1.000) atau pilih bayar COD." },
-    { num: "04", icon: "🏸", title: "Mulai Bertanding", desc: "Tunjukkan bukti booking ke pengelola GOR saat tiba." },
+    { num: "01", icon: "🗓️", title: "Pilih Slot Jadwal", desc: "Pilih nomor Court lapangan, tanggal bermain, dan jam slot sewa yang masih kosong." },
+    { num: "02", icon: "📱", title: "Isi Data Diri", desc: "Masukkan nama lengkap Anda dan nomor WhatsApp aktif untuk kebutuhan konfirmasi dan cek riwayat sewa." },
+    { num: "03", icon: "💳", title: "Lakukan Pembayaran", desc: "Selesaikan tagihan sewa via QRIS otomatis dengan biaya layanan Rp1.000 atau pilih bayar COD di lokasi." },
+    { num: "04", icon: "🏸", title: "Mulai Bertanding", desc: "Tunjukkan nomor WhatsApp atau nama Anda ke pengelola GOR saat tiba di lokasi untuk langsung main." },
   ];
 
   const reviews = [
@@ -500,7 +500,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <span className="text-sm">🏸</span>
               </div>
-              <span className="font-black text-white text-sm">GOR Pandu Meulaboh</span>
+              <span className="font-black text-white text-sm">GOR Pandu Cendikia Meulaboh</span>
             </div>
 
             <div className="space-y-3 text-xs">
@@ -522,12 +522,12 @@ export default function Home() {
                 </a>
                 <span className="text-slate-600">WhatsApp & Telepon</span>
               </div>
-              <div className="flex items-center gap-2.5 text-slate-400">
+              {/* <div className="flex items-center gap-2.5 text-slate-400">
                 <span className="text-slate-500">📸</span>
                 <a href="https://instagram.com/gor_pandu_meulaboh" target="_blank" rel="noopener noreferrer" className="text-blue-400 font-semibold hover:underline">
                   @gor_pandu_meulaboh
                 </a>
-              </div>
+              </div> */}
             </div>
 
             {/* Hours */}
